@@ -1,50 +1,65 @@
 const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
 const { Pool } = require("pg");
-require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
 
-// PostgreSQL接続設定
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
+// CORS設定を追加
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
 
-// Middleware
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-
-// Routes
-app.get("/health", (req, res) => {
-  res.json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-    service: "backend-api",
-  });
-});
-
-app.get("/api/users", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT * FROM users ORDER BY id");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Database error:", err);
-    // データベース接続エラーの場合は仮データを返す
-    const mockUsers = [
-      { id: 1, name: "John Doe", email: "john@example.com" },
-      { id: 2, name: "Jane Smith", email: "jane@example.com" },
-    ];
-    res.json(mockUsers);
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+  } else {
+    next();
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.use(express.json());
+
+// PostgreSQL接続設定
+const pool = new Pool({
+  host: process.env.DB_HOST || "localhost",
+  port: process.env.DB_PORT || 5432,
+  database: process.env.DB_NAME || "webapp_db",
+  user: process.env.DB_USER || "webapp_user",
+  password: process.env.DB_PASSWORD || "password123",
+});
+
+// ヘルスチェックエンドポイント
+app.get("/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
+// ユーザー一覧取得API
+app.get("/api/users", async (req, res) => {
+  try {
+    console.log("Fetching users from database...");
+    const result = await pool.query("SELECT * FROM users ORDER BY id");
+    console.log(`Found ${result.rows.length} users`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({
+      error: "Database connection failed",
+      details: error.message,
+    });
+  }
+});
+
+// ルートエンドポイント
+app.get("/", (req, res) => {
+  res.json({
+    message: "Kubernetes Webapp Backend API",
+    endpoints: ["GET /health - Health check", "GET /api/users - Get all users"],
+  });
+});
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running on port ${port}`);
 });
