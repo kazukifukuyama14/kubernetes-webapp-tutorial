@@ -50,7 +50,7 @@ kubernetes-webapp/
 
 ```bash:環境構築
 # プロジェクトクローン・移動
-git clone <repository-url>
+git clone https://github.com/kazukifukuyama14/kubernetes-webapp-tutorial.git
 cd kubernetes-webapp
 
 # Backend起動
