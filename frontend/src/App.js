@@ -12,8 +12,8 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      // Kubernetes内部サービス名を使用
-      const apiUrl = "http://webapp-backend-service:3001/api/users";
+      // 相対パスでプロキシ経由アクセス
+      const apiUrl = "/api/users";
       console.log("Fetching from:", apiUrl);
 
       const response = await fetch(apiUrl);
