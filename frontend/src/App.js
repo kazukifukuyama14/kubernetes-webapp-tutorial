@@ -12,44 +12,41 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/users");
+      // Kubernetes環境用のAPI URL（MinikubeのNodePort経由）
+      const apiUrl = `http://${window.location.hostname}:30001/api/users`;
+      console.log("Fetching from:", apiUrl); // デバッグ用
+
+      const response = await fetch(apiUrl);
       if (!response.ok) {
-        throw new Error("Failed to fetch users");
+        throw new Error(`Failed to fetch users: ${response.status}`);
       }
       const data = await response.json();
       setUsers(data);
     } catch (err) {
+      console.error("Error fetching users:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Kubernetes Demo App</h1>
-
-        {loading && <p>Loading users...</p>}
-
-        {error && <p style={{ color: "red" }}>Error: {error}</p>}
-
-        {!loading && !error && (
-          <div>
-            <h2>Users ({users.length})</h2>
-            {users.length > 0 ? (
-              <ul style={{ textAlign: "left" }}>
-                {users.map((user) => (
-                  <li key={user.id}>
-                    <strong>{user.name}</strong> - {user.email}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No users found</p>
-            )}
-          </div>
-        )}
+        <div className="users-container">
+          <h2>Users ({users.length})</h2>
+          <ul className="users-list">
+            {users.map((user) => (
+              <li key={user.id} className="user-item">
+                <strong>{user.name}</strong> - {user.email}
+              </li>
+            ))}
+          </ul>
+        </div>
       </header>
     </div>
   );
