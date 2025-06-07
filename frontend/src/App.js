@@ -12,15 +12,16 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      // Kubernetes環境用のAPI URL（MinikubeのNodePort経由）
-      const apiUrl = `http://${window.location.hostname}:30001/api/users`;
-      console.log("Fetching from:", apiUrl); // デバッグ用
+      // Kubernetes内部サービス名を使用
+      const apiUrl = "http://webapp-backend-service:3001/api/users";
+      console.log("Fetching from:", apiUrl);
 
       const response = await fetch(apiUrl);
       if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const data = await response.json();
+      console.log("Success! Data:", data);
       setUsers(data);
     } catch (err) {
       console.error("Error fetching users:", err);
