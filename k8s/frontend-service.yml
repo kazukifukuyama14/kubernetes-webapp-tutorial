@@ -6,8 +6,9 @@ spec:
   selector:
     app: webapp-frontend
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 80
-      name: 30000
+      nodePort: 30000
   type: NodePort
