@@ -3,6 +3,10 @@
 nginx.conf
 frontend/nginx.conf
 
-# その他のフォーマット対象外
+# ログファイル
 *.log
 *.pid
+
+# Docker関連
+Dockerfile*
+.dockerignore

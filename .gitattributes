@@ -1,0 +1,2 @@
+*.conf linguist-language=nginx
+nginx.conf linguist-language=nginx
