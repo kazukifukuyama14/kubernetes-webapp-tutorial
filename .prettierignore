@@ -1,0 +1,8 @@
+# Nginx設定ファイル
+*.conf
+nginx.conf
+frontend/nginx.conf
+
+# その他のフォーマット対象外
+*.log
+*.pid
