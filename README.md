@@ -18,7 +18,7 @@ Kubernetes の学習を目的とした 3 層アーキテクチャの Web アプ�
 ## ディレクトリ構成
 
 ```txt:構成一覧
-kubernetes-webapp/
+kubernetes-webapp-tutorial/
 　├── README.md
 　├── .gitignore
 　├── docker-compose.yml
@@ -51,7 +51,7 @@ kubernetes-webapp/
 ```bash:環境構築
 # プロジェクトクローン・移動
 git clone https://github.com/kazukifukuyama14/kubernetes-webapp-tutorial.git
-cd kubernetes-webapp
+cd kubernetes-webapp-tutorial
 
 # Backend起動
 cd backend
